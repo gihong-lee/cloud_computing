@@ -19,10 +19,14 @@ def set_config(task_index, port = 15000):
   node_list = os.environ['SLURM_NODELIST']
   base, nodes = node_list.split('-', 1)
   nodes = nodes[1:-1].split('-')
-
+  
   node_idx_list = []
+
   for i in range(int(nodes[0]),int(nodes[1])+1):
-    node_idx_list.append(f"0{i}")
+    if i < 10:
+      node_idx_list.append(f"0{i}")
+    else:
+      node_idx_list.append(f"{i}")
 
   tf_config = {
         'cluster': {'worker': [f"{base}-{node_idx}:{port}" for node_idx in node_idx_list]},
@@ -34,6 +38,7 @@ def set_config(task_index, port = 15000):
 
 def dataset(batch_size):
   (x_train, y_train), _ = tf.keras.datasets.cifar10.load_data()
+  print(len(x_train))
   x_train = x_train / np.float32(255)
   y_train = y_train.astype(np.int64)
   print(len(x_train))
@@ -74,7 +79,6 @@ def train_dense_model():
     multi_worker_dataset = dataset(global_batch_size)
     with mirrored_strategy.scope():
         model = build_and_compile_cnn_model()
-    
     # training and inference
     model.fit(multi_worker_dataset, epochs=50, steps_per_epoch=sample_num//global_batch_size+1)
     return True
