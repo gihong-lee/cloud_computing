@@ -14,7 +14,7 @@ optimizer = 'adam'
 
 def res50():
     def conv_block(input_tensor, num_filters):
-        x = tf.keras.layers.Conv2D(num_filters, (1, 1), strides=1, padding='valid')(x)(input_tensor)
+        x = tf.keras.layers.Conv2D(num_filters, (1, 1), strides=1, padding='valid')(input_tensor)
         x = tf.keras.layers.BatchNormalization()(x)
         x = tf.keras.layers.Activation(activation)(x)
 

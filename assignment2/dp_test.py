@@ -41,7 +41,6 @@ def dataset(batch_size):
   print(len(x_train))
   x_train = x_train / np.float32(255)
   y_train = y_train.astype(np.int64)
-  print(len(x_train))
   train_dataset = tf.data.Dataset.from_tensor_slices(
       (x_train, y_train)).shuffle(60000).repeat().batch(batch_size)
   return train_dataset
