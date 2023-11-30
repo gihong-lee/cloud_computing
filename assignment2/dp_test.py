@@ -16,17 +16,21 @@ activation = 'relu'
 optimizer = 'adam'
 
 def set_config(task_index, port = 15000):
-  node_list = os.environ['SLURM_NODELIST']
-  base, nodes = node_list.split('-', 1)
-  nodes = nodes[1:-1].split('-')
-  
   node_idx_list = []
+  cluster_info = os.environ['SLURM_NODELIST']
+  base, node_list = cluster_info.split('-', 1)
+  _nodes = node_list[1:-1].split(',')
+  for nodes in _nodes:
+    if "-" in nodes:
+      nodes = nodes.split('-')
 
-  for i in range(int(nodes[0]),int(nodes[1])+1):
-    if i < 10:
-      node_idx_list.append(f"0{i}")
+      for i in range(int(nodes[0]),int(nodes[1])+1):
+        if i < 10:
+          node_idx_list.append(f"0{i}")
+        else:
+          node_idx_list.append(f"{i}")
     else:
-      node_idx_list.append(f"{i}")
+      node_idx_list.append(nodes)
 
   tf_config = {
         'cluster': {'worker': [f"{base}-{node_idx}:{port}" for node_idx in node_idx_list]},
